@@ -1,0 +1,2 @@
+ErrorDocument 404 http://localhost/JagoanJs/PPWB/spp_pembayaran/login/
+Options -Indexes

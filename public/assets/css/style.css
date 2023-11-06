@@ -1,0 +1,14 @@
+:root{
+    --theme-color: #186F65;
+    --theme-color-darker: #186F65;
+}
+
+button.btn-theme {
+    width: 100%;
+    padding: 10px;
+    background-color: var(--theme-color) !important;
+    color: #fff !important;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}

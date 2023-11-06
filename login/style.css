@@ -1,0 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+:root{
+    --theme-color: #186F65;
+    --theme-color-darker: #186F65;
+
+}
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f2f2f2;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-container {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    width: 300px;
+}
+
+.login-container h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.login-container label {
+    display: block;
+    margin-bottom: 8px;
+}
+.login-container input[type="email"]:hover,
+.login-container input[type="password"]:hover {
+    outline: none;
+    border: 2px solid var(--theme-color) !important;
+
+}
+.mb-3 {
+    margin-bottom: 1.4rem;
+}
+input {
+    transition: all .3s;
+    outline: none;
+}
+.login-container input[type="email"],
+.login-container input[type="password"] {
+    width: 90%;
+    margin: 0 auto;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.login-container button {
+    width: 100%;
+    padding: 10px;
+    background-color: var(--theme-color);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.login-container button:hover {
+    background-color: var(--theme-color);
+}
+
+.login-container a {
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    color: #186F65 !important;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+
