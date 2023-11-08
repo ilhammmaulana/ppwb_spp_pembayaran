@@ -1,50 +1,46 @@
 <?php
-session_start();
-require_once '../../database/connection.php';
-$connection = (new Connection())->getConnection();
-
-
-$salt = base64_encode(date('y-m-d'));
-$query = "SELECT siswa.id, siswa.name, siswa.phone,siswa.tanggal_lahir,siswa.jenis_kelamin, siswa.nisn,siswa.nis,siswa.alamat, siswa.phone, class.name AS class_name  FROM siswa INNER JOIN class ON siswa.id_class = class.id ORDER BY siswa.id DESC";
-$result = $connection->query($query);
-$data = $result->fetchAll(PDO::FETCH_ASSOC);
-
-$sqlClass = "SELECT * FROM class";
-$classes = $connection->query($sqlClass)->fetchAll(PDO::FETCH_ASSOC);
-
-if (!$result) {
-    die("Database query failed.");
-}
+include '../../database/connection.php';
+$connection = (new Connection())->getConnection();  
+$sqlMonths = "SELECT * FROM months";
+$sqlGetPembayaran = "SELECT pembayaran.id , pembayaran.tgl_bayar, pembayaran.created_at, siswa.name, pembayaran.tahun_bayar, months.name as month_name,pembayaran.jumlah_bayar, pembayaran.created_at,  class.name AS classname 
+FROM pembayaran 
+LEFT JOIN siswa ON pembayaran.id_siswa = siswa.id
+LEFT JOIN class ON siswa.id_class = class.id
+LEFT JOIN months ON siswa.id_class = months.id";
+$months = $connection->query($sqlMonths)->fetchAll(PDO::FETCH_ASSOC);
+$data = $connection->query($sqlGetPembayaran)->fetchAll(PDO::FETCH_ASSOC);
 ?>
+
+
+
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Siswa</title>
+    <title>SPP pembayaran</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
     <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
     <div class="container mt-5">
-        <h2>Data Siswa</h2>
+        <h2>SPP Pembayaran</h2>
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSiswaModal">
-            Add Siswa
+            Catat pembayaran spp
         </button>
-        <a href="../spp" class="btn btn-info text-white">Pembayaran SPP</a>
-   <div class="table-responsive mt-3">
+        <a href="../siswa" class="btn btn-info text-white">Tambah siswa</a>
+        <a href="../index.php" class="btn btn-info text-white">Back to dashboard</a>
+   <div class="mt-3">
     <table class="table table-bordered table-striped">
         <thead>
             <tr>
                 <th>Id</th>
-                <th>Name</th>
-                <th>NIS</th>
-                <th>Phone</th>
-                <th>Class</th>
-                <th>Tanggal lahir</th>
-                <th>Alamat</th>
-                <th>Jenis Kelamin</th>
+                <th>Siswa</th>
+                <th>Tanggal Bayar</th>
+                <th>Bulan</th>
+                <th>Tahun Bayar</th>
+                <th>Jumlah bayar</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -52,13 +48,11 @@ if (!$result) {
             <?php foreach ($data as $key => $row) { ?>
                 <tr>
                     <td><?php echo e($row['id']); ?></td>
-                    <td><?php echo e($row['name']); ?></td>
-                    <td><?php echo e($row['nis']); ?></td>
-                    <td><?php echo e($row['phone']); ?></td>
-                    <td><?php echo e($row['class_name']); ?></td>
-                    <td><?php echo e($row['tanggal_lahir']); ?></td>
-                    <td><?php echo e($row['alamat']); ?></td>
-                    <td><?php echo e($row['jenis_kelamin']) === 'male' ? 'Laki Laki' : "Perempuan" ?></td>
+                    <td><?php echo e($row['name']) . "(" .e($row['classname']) .")" ; ?></td>
+                    <td><?php echo e($row['tgl_bayar']); ?></td>
+                    <td><?php echo e($row['month_name']); ?></td>
+                    <td><?php echo e($row['tahun_bayar']); ?></td>
+                    <td><?php echo e($row['jumlah_bayar']); ?></td>
                     <td class="row gap-2">
                         <a class="col-md-6 btn btn-primary" href="edit.php?id=<?= $salt ."|". base64_encode($row['id']) ?>">Edit</a>
                         <form action="process/delete.php" class="col-md-6" method="POST">
@@ -73,11 +67,11 @@ if (!$result) {
 </div>
     </div>
     
-    <div class="modal  fade" id="addSiswaModal" tabindex="-1" role="dialog" aria-labelledby="addSiswaModalLabel" aria-hidden="true">
+    <div class="modal  fade" id="addSiswaModal" tabindex="-1" role="dialog" aria-labelledby="addPembayaran" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addSiswaModalLabel">Form Pendaftaran</h5>
+                    <h5 class="modal-title" id="addPembayaran">Form Pendaftaran</h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -95,7 +89,6 @@ if (!$result) {
                                 <input type="text" class="form-control" id="nis" placeholder="Nomer Induk Siswa" name="nis" aria-describedby="emailHelp" required>
                             </div>
                             </div>
-                      
                         </div>
                         <div class="row">
                             <div class="col-md-6">
@@ -105,25 +98,17 @@ if (!$result) {
                             </div>
                             </div>
                             <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="nis" class="form-label">NISN</label>
-                                <input type="text" class="form-control" id="nisn" placeholder="Nomer Induk Siswa" name="nisn" aria-describedby="emailHelp" required>
-                            </div>
-                            </div>
-                            <div class="col-md-12">
                                 <div class="mb-3">
-                                    <label for="class" class="form-label">Kelas</label>
-                                    <select class="form-control" id="class" name="id_class" aria-describedby="emailHelp">
-                                        <option value="" disable selected> Pilih kelas</option>
-                                        <?php
-                                        foreach ($classes as $class) {
-                                            echo '<option value="' . $class['id'] . '">' . $class['name'] . '</option>';
-                                        }
-                                        ?>
-                                    </select>
+                                    <label for="asal_sekolah" class="form-label">Asal Sekolah</label>
+                                    <input type="text" class="form-control" id="asal_sekolah" placeholder="Asal sekolah" name="asal_sekolah" aria-describedby="emailHelp" required>
                                 </div>
                             </div>
-
+                             <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label for="class" class="form-label">Kelas</label>
+                                    <input type="text" class="form-control" id="class" placeholder="Kelas" name="class" aria-describedby="emailHelp">
+                                </div>
+                            </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6">

@@ -15,7 +15,7 @@ class Connection
         $this->dbname = 'ilham_db_spp';
         $this->host = 'localhost';
         $this->username = 'root';
-        $this->password = 'ilhamjago123';
+        $this->password = '';
 
         $this->connect(); 
     }

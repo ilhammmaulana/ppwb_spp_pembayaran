@@ -1,0 +1,2 @@
+ErrorDocument 404 http://localhost/Ilham/ppwb_spp_pembayaran/login/
+Options -Indexes

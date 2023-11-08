@@ -20,6 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     if ($user && password_verify($password, $user['password'])) {
         $_SESSION['user'] = $user;
+        setFlashMessage("Password yang anda masukan benar!", 'Berhasil login', "success", "Oke");
         redirect('../admin/index.php');
     } else {
         setFlashMessage("Silahkan coba lagi", 'Maaf password atau email anda salah!', "error", "Coba lagi");
